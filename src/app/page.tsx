@@ -1,3 +1,4 @@
+// Main Page Component
 "use client";
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
@@ -7,6 +8,11 @@ import Ellipse from "@/images/Ellipse 1.png";
 import billgate from "@/images/billGates.png";
 import boy from "@/images/boy.png";
 
+interface Message {
+  content: string;
+  sender: string;
+  timestamp: string;
+}
 
 interface User {
   img: StaticImageData;
@@ -40,14 +46,30 @@ const users: User[] = [
   }
 ];
 
-const page: React.FC = () => {
+const Page: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [userMessages, setUserMessages] = useState<{ [key: string]: Message[] }>({});
+
+  const handleUserClick = (user: User) => {
+    setSelectedUser(user);
+  };
+
+  const handleSendMessage = (user: User, newMessage: Message) => {
+    setUserMessages((prevMessages) => ({
+      ...prevMessages,
+      [user.name]: [...(prevMessages[user.name] || []), newMessage],
+    }));
+  };
 
   return (
     <div className="flex h-screen p-2 bg-[#e2e5e9] space-x-6">
-      <Sidebar users={users} onUserClick={setSelectedUser} />
+      <Sidebar users={users} onUserClick={handleUserClick} />
       {selectedUser ? (
-        <Chat user={selectedUser} />
+        <Chat 
+          user={selectedUser} 
+          messages={userMessages[selectedUser.name] || []}
+          onSendMessage={(newMessage) => handleSendMessage(selectedUser, newMessage)}
+        />
       ) : (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray-500">Select a user to start chatting</p>
@@ -57,74 +79,4 @@ const page: React.FC = () => {
   );
 };
 
-export default page;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const page = () => {
-//   interface User {
-//     img: StaticImageData;
-//     name: string;
-//     lastMessage: string;
-//     lastSeen: string;
-//     unreadCount: number;
-//   }
-
-//   const [users, setUsers] = useState<User[]>([
-//     {
-//       img: Ellipse,
-//       name: "Ahmad",
-//       lastMessage: "how are you",
-//       lastSeen: "Today 11:00 pm",
-//       unreadCount: 1,
-//     },
-//     {
-//       img: Ellipse,
-//       name: "Ali",
-//       lastMessage: "Good morning",
-//       lastSeen: "Today 9:00 pm",
-//       unreadCount: 1,
-//     },
-//     {
-//       img: Ellipse,
-//       name: "Hussain",
-//       lastMessage: "Hi",
-//       lastSeen: "Today 7:17 am",
-//       unreadCount: 2,
-//     },
-//   ]);
-//   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  
-//   const handleUserSelect = (user: User) => {
-//     setSelectedUser(user);
-//   };
-//   return (
-//     <div className="flex">
-//       <Sidebar users={users} onUserSelect={handleUserSelect} />
-//       {selectedUser && <Chat user={selectedUser} />}{" "}
-//     </div>
-//   );
-// };
-
-// export default page;
-
-
-// App.tsx
-
-
+export default Page;

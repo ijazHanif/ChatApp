@@ -1,10 +1,8 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Ellipse from "@/images/Ellipse 1.png";
 import { PaperClipIcon, FaceSmileIcon, CameraIcon } from "@heroicons/react/24/outline";
 import socket from "@/utils/socket";
-
 
 import { StaticImageData } from "next/image";
 
@@ -22,21 +20,24 @@ interface ChatProps {
     lastSeen: string;
     unreadCount: number;
   };
+  messages: Message[];
+  onSendMessage: (message: Message) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ user }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const Chat: React.FC<ChatProps> = ({ user, messages, onSendMessage }) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
     socket.on("message", (message: Message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      if (message.sender === user.name) {
+        onSendMessage(message);
+      }
     });
 
     return () => {
       socket.off("message");
     };
-  }, []);
+  }, [user, onSendMessage]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +49,7 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
       };
 
       socket.emit("message", newMessage);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      onSendMessage(newMessage);
       setInputValue("");
     }
   };
@@ -63,64 +64,16 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
             <p className="text-[12px] text-[#5F83A3]">{user.lastMessage}</p>
           </div>
         </div>
-        <div className="flex space-x-5 ">
-           {/* Icons can be replaced with actual components */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="#A855F7"
-            width="24"
-            height="24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 6.75c0 9.665 7.835 17.5 17.5 17.5a2.25 2.25 0 002.25-2.25v-3.75a2.25 2.25 0 00-1.22-2.005L17.87 14.12a2.25 2.25 0 00-2.12-.25l-2.1.84a9.45 9.45 0 01-4.83-4.83l.84-2.1a2.25 2.25 0 00-.25-2.12L6.755 2.72A2.25 2.25 0 004.75 1.5H1a2.25 2.25 0 00-2.25 2.25z"
-            />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="#A855F7"
-            width="24"
-            height="24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 10.75a1.25 1.25 0 011.25 1.25v8.25a1.25 1.25 0 01-1.25 1.25H6.75A1.25 1.25 0 015.5 20.25v-8.25a1.25 1.25 0 011.25-1.25h9zm1.2 5.55l3.8-3.8v9.6l-3.8-3.8z"
-            />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="#A855F7"
-            width="24"
-            height="24"
-          >
-            <circle cx="12" cy="6" r="1.5" />
-            <circle cx="12" cy="12" r="1.5" />
-            <circle cx="12" cy="18" r="1.5" />
-          </svg>
-        </div>
-
-
       </header>
 
       <main className="flex-1 overflow-y-auto mt-4 flex justify-end items-end">
         <div className="space-y-2">
           {messages.map((message, index) => (
-            <div key={index} className="flex justify-start items-center">
+            <div key={index} className="flex justify-start items-center gap-2">
               <div className="bg-gray-200 p-2 rounded-lg max-w-xs">
                 <p>{message.content}</p>
               </div>
-              <p className="text-xs text-gray-500 ">{message.timestamp}</p>
+              <p className="text-xs text-gray-500 pt-4">{message.timestamp}</p>
             </div>
           ))}
         </div>
@@ -145,6 +98,7 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
 };
 
 export default Chat;
+
 
 
 
