@@ -82,11 +82,13 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex h-screen p-2 bg-[#e2e5e9] space-x-6">
+      {/* SideBar component */}
       <Sidebar users={users} onUserClick={handleUserClick} />
       {selectedUser ? (
+      
+      // Chat Component
   <Chat
     user={selectedUser}
-    // messages={[...selectedUser.messages, ...(userMessages[selectedUser.name] || [])]} 
     messages={[...(selectedUser.messages || []), ...(userMessages[selectedUser.name] || [])]}
 
     onSendMessage={(newMessage) => handleSendMessage(selectedUser, newMessage)}

@@ -7,7 +7,7 @@ import chat from "@/images/chat.png";
 import notification from "@/images/notification.png";
 import setting from "@/images/setting.png";
 import Group from "@/images/Group.png";
-import check from "@/images/check.png";
+// import check from "@/images/check.png";
 import { StaticImageData } from "next/image";
 
 
@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ users, onUserClick }) => {
       </div>
 
       <div className="flex flex-col flex-1 space-y-2 h-full text-black">
-        {/* Search bar */}
+        {/* Search bar for searching user */}
          <div className="relative p-2">
           <input
             type="search"

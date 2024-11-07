@@ -34,9 +34,7 @@ const Chat: React.FC<ChatProps> = ({ user, messages, onSendMessage }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
   const [attachment, setAttachment] = useState<File | null>(null);
-  const [attachmentPreview, setAttachmentPreview] = useState<string | null>(
-    null
-  ); // For displaying preview
+  const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null ); // For displaying preview
 
   useEffect(() => {
     socket.on("message", (message: Message) => {
@@ -142,7 +140,7 @@ const Chat: React.FC<ChatProps> = ({ user, messages, onSendMessage }) => {
           {attachmentPreview && (
             <div className="mt-2 p-2 border border-gray-300 rounded-md">
               {attachmentPreview && (
-                <img
+                <Image
                   src={attachmentPreview}
                   alt="Attachment Preview"
                   className="max-w-full h-auto rounded-md"
